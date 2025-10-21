@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table与Div的区别</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #933;
+        }
+        
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .example {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .example:hover {
+            transform: translateY(-5px);
+        }
+        
+        .example h2 {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+      
+        
+        .comparison-table th:nth-child(even) {
+            background-color: #f8f9fa;
+            padding: 55px;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .comparison-table tr:hover {
+            background-color: #e8f4fc;
+        }
+        
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .table-example {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .table-example th, .table-example td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .table-example th {
+            background-color: #f2f2f2;
+        }
+        
+        .div-example {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .div-example > div {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            margin: 5px;
+            background-color: #f2f2f2;
+            border-radius: 4px;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .conclusion {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 5px solid #4caf50;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>HTML中Table与Div的区别</h1>
+    <p>Table和Div是HTML中两种不同的布局方式，它们有不同的用途和特点。</p>
+    <div class="container">
+        <div class="example">
+            <h2>Table 示例</h2>
+            <p>Table 主要用于展示<strong>表格数据</strong>，具有行和列的结构。</p>
+            
+            <table class="table-example">
+                <tr>
+                    <th>姓名</th>
+                    <th>年龄</th>
+                    <th>职业</th>
+                </tr>
+                <tr>
+                    <td>张三</td>
+                    <td>28</td>
+                    <td>工程师</td>
+                </tr>
+                <tr>
+                    <td>李四</td>
+                    <td>32</td>
+                    <td>设计师</td>
+                </tr>
+                <tr>
+                    <td>王五</td>
+                    <td>25</td>
+                    <td>产品经理</td>
+                </tr>
+            </table>
+            
+            <div class="code-block">
+&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;姓名&lt;/th&gt;
+    &lt;th&gt;年龄&lt;/th&gt;
+    &lt;th&gt;职业&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;张三&lt;/td&gt;
+    &lt;td&gt;28&lt;/td&gt;
+    &lt;td&gt;工程师&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;!-- 更多行 --&gt;
+&lt;/table&gt;
+            </div>
+        </div>
+        
+        <div class="example">
+            <h2>Div 示例</h2>
+            <p>Div 是通用的<strong>布局容器</strong>，用于组织和结构化网页内容。</p>
+            
+            <div class="div-example">
+                <div>
+                    <h3>新闻标题</h3>
+                    <p>这是一段新闻摘要内容...</p>
+                </div>
+                <div>
+                    <h3>产品介绍</h3>
+                    <p>这是产品描述内容...</p>
+                </div>
+                <div>
+                    <h3>用户评价</h3>
+                    <p>用户对产品的评价...</p>
+                </div>
+            </div>
+            
+            <div class="code-block">
+&lt;div class="container"&gt;
+  &lt;div class="item"&gt;
+    &lt;h3&gt;新闻标题&lt;/h3&gt;
+    &lt;p&gt;这是一段新闻摘要内容...&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="item"&gt;
+    &lt;h3&gt;产品介绍&lt;/h3&gt;
+    &lt;p&gt;这是产品描述内容...&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;!-- 更多div --&gt;
+&lt;/div&gt;
+            </div>
+        </div>
+    </div>
+    
+    <table class="comparison-table">
+        <tr>
+            <th>特性</th>
+            <th>Table</th>
+            <th>Div</th>
+        </tr>
+        <tr>
+            <td><strong>设计目的蒂姆</strong></td>
+            <td>展示表格数据</td>
+            <td>通用布局容器</td>
+        </tr>
+        <tr>
+            <td><strong>语义性</strong></td>
+            <td>语义明确，表示表格数据</td>
+            <td>无特定语义，依赖CSS定义样式</td>
+        </tr>
+        <tr>
+            <td><strong>结构</strong></td>
+            <td>行列结构，固定</td>
+            <td>自由结构，灵活</td>
+        </tr>
+        <tr>
+            <td><strong>代码复杂度</strong></td>
+            <td>结构复杂，标签多</td>
+            <td>结构简单，标签少</td>
+        </tr>
+        <tr>
+            <td><strong>加载速度</strong></td>
+            <td>较慢（需解析完整结构）</td>
+            <td>较快</td>
+        </tr>
+        <tr>
+            <td><strong>响应式设计</strong></td>
+            <td>适应性差</td>
+            <td>适应性强</td>
+        </tr>
+        <tr>
+            <td><strong>SEO友好性</strong></td>
+            <td>用于表格数据时友好。顺便，哦草泥马</td>
+            <td>结构清晰时友好</td>
+        </tr>
+        <tr>
+            <td><strong>可访问性</strong></td>
+            <td>屏幕阅读器容易理解</td>
+            <td>需要正确使用ARIA角色</td>
+        </tr>
+    </table>
+    
+    <div class="conclusion">
+        <h2>总结111</h2>
+        <p><span class="highlight">Table</span> 最适合用于展示<strong>表格数据</strong>，如财务报表、数据比较等。</p>
+        <p><span class="highlight">Div</span> 最适合用于<strong>页面布局</strong>，如创建头部、导航栏、内容区域和页脚等。</p>
+        <p>现代网页设计中，应避免使用Table进行页面布局，而应使用Div结合CSS Flexbox或Grid来实现响应式布局。</p>
+    </div>
+</body>
+</html>

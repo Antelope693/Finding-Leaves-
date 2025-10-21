@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>羚羊吃叶子</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 10px;
+            background-color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        #gameContainer {
+            text-align: center;
+            width: 100%;
+            max-width: 1024px;
+        }
+        canvas {
+            border: 3px solid #34495e;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            max-width: 100%;
+            height: auto;
+        }
+        .instructions {
+            color: white;
+            margin: 10px 0;
+            font-size: 14px;
+            padding: 0 10px;
+            word-wrap: break-word;
+        }
+        
+        /* 觸控按鈕樣式 */
+        .touch-button {
+            transition: all 0.2s ease;
+        }
+        
+        .touch-button:active {
+            background: rgba(255,255,255,0.4) !important;
+            transform: scale(0.95);
+        }
+        
+        /* 音樂圖標旋轉動畫 */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .music-playing {
+            animation: spin 2s linear infinite;
+        }
+        
+        /* 移動設備適配 */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .instructions {
+                font-size: 12px;
+                margin: 5px 0;
+            }
+            canvas {
+                border: 2px solid #34495e;
+            }
+            #musicPlayer {
+                top: 5px !important;
+                right: 5px !important;
+                gap: 5px !important;
+            }
+            #musicToggle {
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 16px !important;
+            }
+            #musicStatus {
+                font-size: 12px !important;
+                padding: 3px 8px !important;
+            }
+            #touchControls {
+                bottom: 10px !important;
+            }
+            .touch-button {
+                width: 50px !important;
+                height: 50px !important;
+                font-size: 20px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .instructions {
+                font-size: 11px;
+                line-height: 1.4;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <h1 style="color: white; margin-bottom: 20px;">羚羊吃叶子</h1>
+        <div class="instructions">
+            <p>使用WASD鍵或触控按钮引导羚羊寻找藏起来的叶子~</p>
+            <p><b>  找找绿色里不一样的叶子~ </b></p>
+            <p><b>  让眼睛与思绪都放松一下吧~ </b></p>
+        </div>
+    </div>
+    
+    <!-- 音樂播放器 -->
+    <div id="musicPlayer" style="position: fixed; top: 10px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 10px;">
+        <div id="musicStatus" style="
+            color: white;
+            font-size: 14px;
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+        ">已暫停</div>
+        <button id="musicToggle" style="
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        " onmouseover="this.style.background='rgba(255,255,255,0.2)'" 
+           onmouseout="this.style.background='rgba(0,0,0,0.7)'">🎵</button>
+    </div>
+    
+    <!-- 隱藏的音頻元素 -->
+    <audio id="backgroundMusic" loop autoplay>
+        <source src="demo.mp3" type="audio/mpeg">
+        您的瀏覽器不支持音頻播放。
+    </audio>
+    
+    <!-- 音效元素 -->
+    <audio id="eatSound" preload="auto">
+        <source src="吃.wav" type="audio/wav">
+    </audio>
+    
+    <audio id="glowSound" loop preload="auto">
+        <source src="闪烁.wav" type="audio/wav">
+    </audio>
+    
+    <!-- 觸控方向鍵 -->
+    <div id="touchControls" style="
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 1000;
+        user-select: none;
+    ">
+        <!-- 上鍵 -->
+        <div class="touch-button" id="touchUp" style="
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2px;
+            cursor: pointer;
+            touch-action: manipulation;
+            font-size: 24px;
+            color: white;
+        ">↑</div>
+        
+        <!-- 左鍵和右鍵 -->
+        <div style="display: flex; gap: 10px;">
+            <div class="touch-button" id="touchLeft" style="
+                width: 60px;
+                height: 60px;
+                background: rgba(255,255,255,0.2);
+                border: 2px solid rgba(255,255,255,0.5);
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 2px;
+                cursor: pointer;
+                touch-action: manipulation;
+                font-size: 24px;
+                color: white;
+            ">←</div>
+            
+            <div class="touch-button" id="touchRight" style="
+                width: 60px;
+                height: 60px;
+                background: rgba(255,255,255,0.2);
+                border: 2px solid rgba(255,255,255,0.5);
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 2px;
+                cursor: pointer;
+                touch-action: manipulation;
+                font-size: 24px;
+                color: white;
+            ">→</div>
+        </div>
+        
+        <!-- 下鍵 -->
+        <div class="touch-button" id="touchDown" style="
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2px;
+            cursor: pointer;
+            touch-action: manipulation;
+            font-size: 24px;
+            color: white;
+        ">↓</div>
+    </div>
+    <script src="game.js"></script>
+    <script>
+        // 簡化標題管理
+        function setTitle(title) {
+            document.title = title;
+        }
+        
+        function restoreTitle() {
+            document.title = "羚羊吃叶子";
+        }
+        
+        // 頁面可見性變化
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                setTitle("❤️快回来吖❤️๐·°(৹˃̵﹏˂̵৹)°·๐");
+            } else {
+                setTitle("你回来啦✨ଘ(੭ˊᵕˋ)੭* ੈ✩‧₊✨˚");
+                setTimeout(() => {
+                    restoreTitle();
+                }, 5000);
+            }
+        });
+        
+        // 窗口焦點變化
+        window.addEventListener('blur', () => {
+            setTitle("❤️快回来吖❤️๐·°(৹˃̵﹏˂̵৹)°·๐");
+        });
+        
+        window.addEventListener('focus', () => {
+            setTitle("你回来啦✨ଘ(੭ˊᵕˋ)੭* ੈ✩‧₊˚✨");
+            setTimeout(() => {
+                restoreTitle();
+            }, 5000);
+        });
+        
+        // 音樂播放器功能
+        const musicToggle = document.getElementById('musicToggle');
+        const musicStatus = document.getElementById('musicStatus');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        let isPlaying = false;
+        
+        // 音效控制
+        const eatSound = document.getElementById('eatSound');
+        const glowSound = document.getElementById('glowSound');
+        let isGlowSoundPlaying = false;
+        
+        // 播放吃葉子音效
+        function playEatSound() {
+            if (eatSound) {
+                eatSound.currentTime = 0; // 重置到開始
+                eatSound.play().catch(error => {
+                    console.log('吃葉子音效播放失敗:', error);
+                });
+            }
+        }
+        
+        // 開始播放發光音效
+        function startGlowSound() {
+            if (glowSound && !isGlowSoundPlaying) {
+                glowSound.currentTime = 0;
+                glowSound.play().then(() => {
+                    isGlowSoundPlaying = true;
+                }).catch(error => {
+                    console.log('發光音效播放失敗:', error);
+                });
+            }
+        }
+        
+        // 停止播放發光音效
+        function stopGlowSound() {
+            if (glowSound && isGlowSoundPlaying) {
+                glowSound.pause();
+                glowSound.currentTime = 0;
+                isGlowSoundPlaying = false;
+            }
+        }
+        
+        // 初始化音樂狀態
+        function updateMusicStatus() {
+            if (isPlaying) {
+                musicToggle.textContent = '🎵';
+                musicToggle.style.background = 'rgba(0,150,0,0.7)';
+                musicToggle.classList.add('music-playing');
+                musicStatus.textContent = '正在播放朝暮雨.mp3';
+            } else {
+                musicToggle.textContent = '🎵';
+                musicToggle.style.background = 'rgba(0,0,0,0.7)';
+                musicToggle.classList.remove('music-playing');
+                musicStatus.textContent = '已暫停';
+            }
+        }
+        
+        // 初始化狀態
+        updateMusicStatus();
+        
+        // 嘗試自動播放
+        backgroundMusic.play().then(() => {
+            isPlaying = true;
+            updateMusicStatus();
+        }).catch(error => {
+            console.log('自動播放被阻止:', error);
+            isPlaying = false;
+            updateMusicStatus();
+        });
+        
+        musicToggle.addEventListener('click', function() {
+            if (isPlaying) {
+                backgroundMusic.pause();
+            } else {
+                backgroundMusic.play().catch(error => {
+                    console.log('音頻播放失敗:', error);
+                    alert('無法播放音樂，請檢查音頻文件是否存在');
+                });
+            }
+        });
+        
+        // 音頻事件監聽器
+        backgroundMusic.addEventListener('play', function() {
+            isPlaying = true;
+            updateMusicStatus();
+        });
+        
+        backgroundMusic.addEventListener('pause', function() {
+            isPlaying = false;
+            updateMusicStatus();
+        });
+        
+        backgroundMusic.addEventListener('ended', function() {
+            isPlaying = false;
+            updateMusicStatus();
+        });
+        
+        // 音頻載入錯誤處理
+        backgroundMusic.addEventListener('error', function() {
+            console.log('音頻文件載入失敗');
+            musicToggle.textContent = '❌';
+            musicToggle.style.background = 'rgba(150,0,0,0.7)';
+            musicToggle.classList.remove('music-playing');
+            musicStatus.textContent = '音頻文件載入失敗';
+        });
+        
+        // 觸控按鈕功能
+        const touchButtons = {
+            up: document.getElementById('touchUp'),
+            down: document.getElementById('touchDown'),
+            left: document.getElementById('touchLeft'),
+            right: document.getElementById('touchRight')
+        };
+        
+        // 觸控按鈕事件處理
+        function setupTouchButton(button, keyCode) {
+            // 按下事件
+            button.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                keysDown[keyCode] = true;
+            });
+            
+            button.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                keysDown[keyCode] = true;
+            });
+            
+            // 釋放事件
+            button.addEventListener('mouseup', function(e) {
+                e.preventDefault();
+                delete keysDown[keyCode];
+            });
+            
+            button.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                delete keysDown[keyCode];
+            });
+            
+            // 離開事件（防止按鈕卡住）
+            button.addEventListener('mouseleave', function(e) {
+                delete keysDown[keyCode];
+            });
+            
+            button.addEventListener('touchcancel', function(e) {
+                delete keysDown[keyCode];
+            });
+        }
+        
+        // 設置所有觸控按鈕
+        setupTouchButton(touchButtons.up, 38);    // 上箭頭
+        setupTouchButton(touchButtons.down, 40);  // 下箭頭
+        setupTouchButton(touchButtons.left, 37);  // 左箭頭
+        setupTouchButton(touchButtons.right, 39); // 右箭頭
+        
+        // 暴露音效函數到全局
+        window.playEatSound = playEatSound;
+        window.startGlowSound = startGlowSound;
+        window.stopGlowSound = stopGlowSound;
+    </script>
+</body>
+</html>
