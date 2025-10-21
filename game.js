@@ -9,9 +9,9 @@ function resizeCanvas() {
     
     // 移動設備適配
     if (screenWidth <= 768) {
-        // 手機和平板：使用較小的畫布
+        // 手機和平板：使用較小的畫布，但保持比例
         canvas.width = Math.min(512, screenWidth - 20);
-        canvas.height = Math.min(400, screenHeight - 200); // 高度變為三分之一
+        canvas.height = Math.min(480, screenHeight - 200); // 增加最小高度
     } else {
         // 桌面設備：使用完整尺寸
         canvas.width = 1024;
@@ -23,7 +23,16 @@ function resizeCanvas() {
 resizeCanvas();
 
 // 監聽窗口大小變化
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener('resize', function() {
+    resizeCanvas();
+    // 重新調整羚羊和葉子位置
+    if (antelope && leaf) {
+        antelope.x = canvas.width / 2;
+        antelope.y = canvas.height / 2;
+        leaf.x = Math.max(16, Math.min(canvas.width - 48, 32 + (Math.random() * (canvas.width - 64))));
+        leaf.y = Math.max(16, Math.min(canvas.height - 48, 32 + (Math.random() * (canvas.height - 64))));
+    }
+});
 
 document.body.appendChild(canvas);
 
@@ -80,8 +89,8 @@ var reset = function () {
 	antelope.y = canvas.height / 2;
 
 	// Place the leaf somewhere on the screen randomly
-	leaf.x = 32 + (Math.random() * (canvas.width - 64));
-	leaf.y = 32 + (Math.random() * (canvas.height - 64));
+	leaf.x = Math.max(16, Math.min(canvas.width - 48, 32 + (Math.random() * (canvas.width - 64))));
+	leaf.y = Math.max(16, Math.min(canvas.height - 48, 32 + (Math.random() * (canvas.height - 64))));
 	
 	// 重置發光效果
 	leafSpawnTime = Date.now();
@@ -109,6 +118,10 @@ var update = function (modifier) {
 	if (68 in keysDown || 39 in keysDown) { // D 鍵或右箭頭
 		antelope.x += antelope.speed * modifier;
 	}
+	
+	// 邊界檢測 - 防止羚羊移出畫布
+	antelope.x = Math.max(0, Math.min(canvas.width - 32, antelope.x));
+	antelope.y = Math.max(0, Math.min(canvas.height - 32, antelope.y));
 
 	// 檢查葉子是否超過10秒未被抓住
 	var currentTime = Date.now();

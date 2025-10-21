@@ -119,9 +119,9 @@
             padding: 5px 10px;
             border-radius: 15px;
             border: 1px solid rgba(255,255,255,0.3);
-        ">已暫停</div>
+        ">正在播放朝暮烟雨--羚羊吃叶子</div>
         <button id="musicToggle" style="
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,150,0,0.7);
             border: 2px solid #fff;
             border-radius: 50%;
             width: 50px;
@@ -131,7 +131,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
         " onmouseover="this.style.background='rgba(255,255,255,0.2)'" 
-           onmouseout="this.style.background='rgba(0,0,0,0.7)'">🎵</button>
+           onmouseout="this.style.background='rgba(0,150,0,0.7)'" class="music-playing">🎵</button>
     </div>
     
     <!-- 隱藏的音頻元素 -->
@@ -322,18 +322,43 @@
             }
         }
         
-        // 初始化狀態
+        // 初始化狀態 - 默認設為播放狀態
+        isPlaying = true;
         updateMusicStatus();
         
-        // 嘗試自動播放
-        backgroundMusic.play().then(() => {
-            isPlaying = true;
-            updateMusicStatus();
-        }).catch(error => {
-            console.log('自動播放被阻止:', error);
-            isPlaying = false;
-            updateMusicStatus();
+        // 頁面加載完成後立即嘗試自動播放
+        document.addEventListener('DOMContentLoaded', function() {
+            // 延遲一點時間確保頁面完全加載
+            setTimeout(function() {
+                backgroundMusic.play().then(() => {
+                    isPlaying = true;
+                    updateMusicStatus();
+                    console.log('音樂自動播放成功');
+                }).catch(error => {
+                    console.log('自動播放被阻止:', error);
+                    isPlaying = false;
+                    updateMusicStatus();
+                });
+            }, 100);
         });
+        
+        // 如果DOMContentLoaded已經觸發，立即嘗試播放
+        if (document.readyState === 'loading') {
+            // 頁面還在加載，等待DOMContentLoaded
+        } else {
+            // 頁面已經加載完成，立即嘗試播放
+            setTimeout(function() {
+                backgroundMusic.play().then(() => {
+                    isPlaying = true;
+                    updateMusicStatus();
+                    console.log('音樂自動播放成功');
+                }).catch(error => {
+                    console.log('自動播放被阻止:', error);
+                    isPlaying = false;
+                    updateMusicStatus();
+                });
+            }, 100);
+        }
         
         musicToggle.addEventListener('click', function() {
             if (isPlaying) {
@@ -418,6 +443,24 @@
         setupTouchButton(touchButtons.down, 40);  // 下箭頭
         setupTouchButton(touchButtons.left, 37);  // 左箭頭
         setupTouchButton(touchButtons.right, 39); // 右箭頭
+        
+        // 用戶交互時嘗試播放音樂
+        function tryAutoPlay() {
+            if (!isPlaying) {
+                backgroundMusic.play().then(() => {
+                    isPlaying = true;
+                    updateMusicStatus();
+                    console.log('音樂通過用戶交互開始播放');
+                }).catch(error => {
+                    console.log('音樂播放失敗:', error);
+                });
+            }
+        }
+        
+        // 監聽用戶交互事件
+        document.addEventListener('click', tryAutoPlay, { once: true });
+        document.addEventListener('keydown', tryAutoPlay, { once: true });
+        document.addEventListener('touchstart', tryAutoPlay, { once: true });
         
         // 暴露音效函數到全局
         window.playEatSound = playEatSound;
