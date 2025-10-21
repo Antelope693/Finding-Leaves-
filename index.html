@@ -35,39 +35,21 @@
             padding: 0 10px;
             word-wrap: break-word;
         }
-        
-        /* 觸控按鈕樣式 */
         .touch-button {
             transition: all 0.2s ease;
         }
-        
         .touch-button:active {
             background: rgba(255,255,255,0.4) !important;
             transform: scale(0.95);
         }
-        
-        /* 音樂圖標旋轉動畫 */
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        
         .music-playing {
             animation: spin 2s linear infinite;
         }
-        
-        /* 移動設備適配 */
         @media (max-width: 768px) {
-            body {
-                padding: 5px;
-            }
-            .instructions {
-                font-size: 12px;
-                margin: 5px 0;
-            }
-            canvas {
-                border: 2px solid #34495e;
-            }
             #musicPlayer {
                 top: 5px !important;
                 right: 5px !important;
@@ -91,13 +73,6 @@
                 font-size: 20px !important;
             }
         }
-        
-        @media (max-width: 480px) {
-            .instructions {
-                font-size: 11px;
-                line-height: 1.4;
-            }
-        }
     </style>
 </head>
 <body>
@@ -110,7 +85,6 @@
         </div>
     </div>
     
-    <!-- 音樂播放器 -->
     <div id="musicPlayer" style="position: fixed; top: 10px; right: 10px; z-index: 1000; display: flex; align-items: center; gap: 10px;">
         <div id="musicStatus" style="
             color: white;
@@ -134,13 +108,10 @@
            onmouseout="this.style.background='rgba(0,150,0,0.7)'" class="music-playing">🎵</button>
     </div>
     
-    <!-- 隱藏的音頻元素 -->
     <audio id="backgroundMusic" loop autoplay>
         <source src="demo.mp3" type="audio/mpeg">
-        您的瀏覽器不支持音頻播放。
     </audio>
     
-    <!-- 音效元素 -->
     <audio id="eatSound" preload="auto">
         <source src="吃.wav" type="audio/wav">
     </audio>
@@ -149,7 +120,6 @@
         <source src="闪烁.wav" type="audio/wav">
     </audio>
     
-    <!-- 觸控方向鍵 -->
     <div id="touchControls" style="
         position: fixed;
         bottom: 20px;
@@ -161,7 +131,6 @@
         z-index: 1000;
         user-select: none;
     ">
-        <!-- 上鍵 -->
         <div class="touch-button" id="touchUp" style="
             width: 60px;
             height: 60px;
@@ -178,7 +147,6 @@
             color: white;
         ">↑</div>
         
-        <!-- 左鍵和右鍵 -->
         <div style="display: flex; gap: 10px;">
             <div class="touch-button" id="touchLeft" style="
                 width: 60px;
@@ -213,7 +181,6 @@
             ">→</div>
         </div>
         
-        <!-- 下鍵 -->
         <div class="touch-button" id="touchDown" style="
             width: 60px;
             height: 60px;
@@ -230,9 +197,9 @@
             color: white;
         ">↓</div>
     </div>
+    
     <script src="game.js"></script>
     <script>
-        // 簡化標題管理
         function setTitle(title) {
             document.title = title;
         }
@@ -241,19 +208,17 @@
             document.title = "羚羊吃叶子";
         }
         
-        // 頁面可見性變化
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 setTitle("❤️快回来吖❤️๐·°(৹˃̵﹏˂̵৹)°·๐");
             } else {
-                setTitle("你回来啦✨ଘ(੭ˊᵕˋ)੭* ੈ✩‧₊✨˚");
+                setTitle("你回来啦✨ଘ(੭ˊᵕˋ)੭* ੈ✩‧₊˚✨");
                 setTimeout(() => {
                     restoreTitle();
                 }, 5000);
             }
         });
         
-        // 窗口焦點變化
         window.addEventListener('blur', () => {
             setTitle("❤️快回来吖❤️๐·°(৹˃̵﹏˂̵৹)°·๐");
         });
@@ -265,28 +230,24 @@
             }, 5000);
         });
         
-        // 音樂播放器功能
         const musicToggle = document.getElementById('musicToggle');
         const musicStatus = document.getElementById('musicStatus');
         const backgroundMusic = document.getElementById('backgroundMusic');
         let isPlaying = false;
         
-        // 音效控制
         const eatSound = document.getElementById('eatSound');
         const glowSound = document.getElementById('glowSound');
         let isGlowSoundPlaying = false;
         
-        // 播放吃葉子音效
         function playEatSound() {
             if (eatSound) {
-                eatSound.currentTime = 0; // 重置到開始
+                eatSound.currentTime = 0;
                 eatSound.play().catch(error => {
                     console.log('吃葉子音效播放失敗:', error);
                 });
             }
         }
         
-        // 開始播放發光音效
         function startGlowSound() {
             if (glowSound && !isGlowSoundPlaying) {
                 glowSound.currentTime = 0;
@@ -298,7 +259,6 @@
             }
         }
         
-        // 停止播放發光音效
         function stopGlowSound() {
             if (glowSound && isGlowSoundPlaying) {
                 glowSound.pause();
@@ -307,13 +267,12 @@
             }
         }
         
-        // 初始化音樂狀態
         function updateMusicStatus() {
             if (isPlaying) {
                 musicToggle.textContent = '🎵';
                 musicToggle.style.background = 'rgba(0,150,0,0.7)';
                 musicToggle.classList.add('music-playing');
-                musicStatus.textContent = '正在播放朝暮雨.mp3';
+                musicStatus.textContent = '正在播放朝暮烟雨--羚羊吃叶子';
             } else {
                 musicToggle.textContent = '🎵';
                 musicToggle.style.background = 'rgba(0,0,0,0.7)';
@@ -322,18 +281,14 @@
             }
         }
         
-        // 初始化狀態 - 默認設為播放狀態
         isPlaying = true;
         updateMusicStatus();
         
-        // 頁面加載完成後立即嘗試自動播放
         document.addEventListener('DOMContentLoaded', function() {
-            // 延遲一點時間確保頁面完全加載
             setTimeout(function() {
                 backgroundMusic.play().then(() => {
                     isPlaying = true;
                     updateMusicStatus();
-                    console.log('音樂自動播放成功');
                 }).catch(error => {
                     console.log('自動播放被阻止:', error);
                     isPlaying = false;
@@ -342,16 +297,12 @@
             }, 100);
         });
         
-        // 如果DOMContentLoaded已經觸發，立即嘗試播放
         if (document.readyState === 'loading') {
-            // 頁面還在加載，等待DOMContentLoaded
         } else {
-            // 頁面已經加載完成，立即嘗試播放
             setTimeout(function() {
                 backgroundMusic.play().then(() => {
                     isPlaying = true;
                     updateMusicStatus();
-                    console.log('音樂自動播放成功');
                 }).catch(error => {
                     console.log('自動播放被阻止:', error);
                     isPlaying = false;
@@ -366,12 +317,10 @@
             } else {
                 backgroundMusic.play().catch(error => {
                     console.log('音頻播放失敗:', error);
-                    alert('無法播放音樂，請檢查音頻文件是否存在');
                 });
             }
         });
         
-        // 音頻事件監聽器
         backgroundMusic.addEventListener('play', function() {
             isPlaying = true;
             updateMusicStatus();
@@ -387,7 +336,6 @@
             updateMusicStatus();
         });
         
-        // 音頻載入錯誤處理
         backgroundMusic.addEventListener('error', function() {
             console.log('音頻文件載入失敗');
             musicToggle.textContent = '❌';
@@ -396,7 +344,6 @@
             musicStatus.textContent = '音頻文件載入失敗';
         });
         
-        // 觸控按鈕功能
         const touchButtons = {
             up: document.getElementById('touchUp'),
             down: document.getElementById('touchDown'),
@@ -404,9 +351,7 @@
             right: document.getElementById('touchRight')
         };
         
-        // 觸控按鈕事件處理
         function setupTouchButton(button, keyCode) {
-            // 按下事件
             button.addEventListener('mousedown', function(e) {
                 e.preventDefault();
                 keysDown[keyCode] = true;
@@ -417,7 +362,6 @@
                 keysDown[keyCode] = true;
             });
             
-            // 釋放事件
             button.addEventListener('mouseup', function(e) {
                 e.preventDefault();
                 delete keysDown[keyCode];
@@ -428,7 +372,6 @@
                 delete keysDown[keyCode];
             });
             
-            // 離開事件（防止按鈕卡住）
             button.addEventListener('mouseleave', function(e) {
                 delete keysDown[keyCode];
             });
@@ -438,31 +381,26 @@
             });
         }
         
-        // 設置所有觸控按鈕
-        setupTouchButton(touchButtons.up, 38);    // 上箭頭
-        setupTouchButton(touchButtons.down, 40);  // 下箭頭
-        setupTouchButton(touchButtons.left, 37);  // 左箭頭
-        setupTouchButton(touchButtons.right, 39); // 右箭頭
+        setupTouchButton(touchButtons.up, 38);
+        setupTouchButton(touchButtons.down, 40);
+        setupTouchButton(touchButtons.left, 37);
+        setupTouchButton(touchButtons.right, 39);
         
-        // 用戶交互時嘗試播放音樂
         function tryAutoPlay() {
             if (!isPlaying) {
                 backgroundMusic.play().then(() => {
                     isPlaying = true;
                     updateMusicStatus();
-                    console.log('音樂通過用戶交互開始播放');
                 }).catch(error => {
                     console.log('音樂播放失敗:', error);
                 });
             }
         }
         
-        // 監聽用戶交互事件
         document.addEventListener('click', tryAutoPlay, { once: true });
         document.addEventListener('keydown', tryAutoPlay, { once: true });
         document.addEventListener('touchstart', tryAutoPlay, { once: true });
         
-        // 暴露音效函數到全局
         window.playEatSound = playEatSound;
         window.startGlowSound = startGlowSound;
         window.stopGlowSound = stopGlowSound;
