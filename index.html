@@ -261,9 +261,7 @@
         function playEatSound() {
             if (eatSound) {
                 eatSound.currentTime = 0;
-                eatSound.play().catch(error => {
-                    console.log('吃葉子音效播放失敗:', error);
-                });
+                eatSound.play().catch(() => {});
             }
         }
         
@@ -272,9 +270,7 @@
                 glowSound.currentTime = 0;
                 glowSound.play().then(() => {
                     isGlowSoundPlaying = true;
-                }).catch(error => {
-                    console.log('發光音效播放失敗:', error);
-                });
+                }).catch(() => {});
             }
         }
         
@@ -308,35 +304,19 @@
                 backgroundMusic.play().then(() => {
                     isPlaying = true;
                     updateMusicStatus();
-                }).catch(error => {
-                    console.log('自動播放被阻止:', error);
+                }).catch(() => {
                     isPlaying = false;
                     updateMusicStatus();
                 });
             }, 100);
         });
         
-        if (document.readyState === 'loading') {
-        } else {
-            setTimeout(function() {
-                backgroundMusic.play().then(() => {
-                    isPlaying = true;
-                    updateMusicStatus();
-                }).catch(error => {
-                    console.log('自動播放被阻止:', error);
-                    isPlaying = false;
-                    updateMusicStatus();
-                });
-            }, 100);
-        }
         
         musicToggle.addEventListener('click', function() {
             if (isPlaying) {
                 backgroundMusic.pause();
             } else {
-                backgroundMusic.play().catch(error => {
-                    console.log('音頻播放失敗:', error);
-                });
+                backgroundMusic.play().catch(() => {});
             }
         });
         
@@ -355,13 +335,6 @@
             updateMusicStatus();
         });
         
-        backgroundMusic.addEventListener('error', function() {
-            console.log('音頻文件載入失敗');
-            musicToggle.textContent = '❌';
-            musicToggle.style.background = 'rgba(150,0,0,0.7)';
-            musicToggle.classList.remove('music-playing');
-            musicStatus.textContent = '音頻文件載入失敗';
-        });
         
         const touchButtons = {
             up: document.getElementById('touchUp'),
@@ -405,20 +378,6 @@
         setupTouchButton(touchButtons.left, 37);
         setupTouchButton(touchButtons.right, 39);
         
-        function tryAutoPlay() {
-            if (!isPlaying) {
-                backgroundMusic.play().then(() => {
-                    isPlaying = true;
-                    updateMusicStatus();
-                }).catch(error => {
-                    console.log('音樂播放失敗:', error);
-                });
-            }
-        }
-        
-        document.addEventListener('click', tryAutoPlay, { once: true });
-        document.addEventListener('keydown', tryAutoPlay, { once: true });
-        document.addEventListener('touchstart', tryAutoPlay, { once: true });
         
         window.playEatSound = playEatSound;
         window.startGlowSound = startGlowSound;

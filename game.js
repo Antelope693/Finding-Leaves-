@@ -28,25 +28,13 @@ window.addEventListener('resize', function() {
 
 document.body.appendChild(canvas);
 
-var bgReady = false;
 var bgImage = new Image();
-bgImage.onload = function () {
-	bgReady = true;
-};
 bgImage.src = "images/background.png";
 
-var heroReady = false;
 var heroImage = new Image();
-heroImage.onload = function () {
-	heroReady = true;
-};
 heroImage.src = "images/antelope.png";
 
-var monsterReady = false;
 var monsterImage = new Image();
-monsterImage.onload = function () {
-	monsterReady = true;
-};
 monsterImage.src = "images/leaf.png";
 
 var antelope = {
@@ -80,9 +68,7 @@ var reset = function () {
 	leafGlowEffect = false;
 	glowIntensity = 0;
 	
-	if (typeof window !== 'undefined' && window.stopGlowSound) {
-		window.stopGlowSound();
-	}
+	window.stopGlowSound && window.stopGlowSound();
 };
 
 var update = function (modifier) {
@@ -109,9 +95,7 @@ var update = function (modifier) {
 		leafGlowEffect = true;
 		glowIntensity = Math.sin(currentTime / 200) * 0.5 + 0.5;
 		
-		if (typeof window !== 'undefined' && window.startGlowSound) {
-			window.startGlowSound();
-		}
+		window.startGlowSound && window.startGlowSound();
 	}
 
 	if (
@@ -123,29 +107,19 @@ var update = function (modifier) {
 		++leavesCollected;
 		onLeafEaten();
 		
-		if (typeof window !== 'undefined' && window.stopGlowSound) {
-			window.stopGlowSound();
-		}
+		window.stopGlowSound && window.stopGlowSound();
 		
 		reset();
 	}
 };
 
 var render = function () {
-	if (bgReady) {
-		ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+	ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+	ctx.drawImage(heroImage, antelope.x, antelope.y);
+	if (leafGlowEffect) {
+		drawGlowEffect(leaf.x, leaf.y);
 	}
-
-	if (heroReady) {
-		ctx.drawImage(heroImage, antelope.x, antelope.y);
-	}
-
-	if (monsterReady) {
-		if (leafGlowEffect) {
-			drawGlowEffect(leaf.x, leaf.y);
-		}
-		ctx.drawImage(monsterImage, leaf.x, leaf.y);
-	}
+	ctx.drawImage(monsterImage, leaf.x, leaf.y);
 
 	var fontSize = canvas.width > 768 ? 24 : 16;
 	var smallFontSize = canvas.width > 768 ? 18 : 12;
@@ -196,16 +170,12 @@ function drawGlowEffect(x, y) {
 }
 
 function onLeafEaten() {
-	if (typeof window !== 'undefined' && window.playEatSound) {
-		window.playEatSound();
-	}
-	if (typeof document !== 'undefined') {
-		const originalTitle = document.title;
-		document.title = "🍃 吃到葉子啦！";
-		setTimeout(() => {
-			document.title = originalTitle;
-		}, 1000);
-	}
+	window.playEatSound && window.playEatSound();
+	const originalTitle = document.title;
+	document.title = "🍃 吃到葉子啦！";
+	setTimeout(() => {
+		document.title = originalTitle;
+	}, 1000);
 }
 
 var main = function () {
