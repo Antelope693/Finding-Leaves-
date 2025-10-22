@@ -72,12 +72,25 @@
                 height: 50px !important;
                 font-size: 20px !important;
             }
+            .instructions {
+                order: 2;
+                margin-top: 10px;
+                margin-bottom: 0;
+            }
+            #gameContainer {
+                display: flex;
+                flex-direction: column;
+            }
+            canvas {
+                order: 1;
+            }
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <h1 style="color: white; margin-bottom: 20px;">羚羊吃叶子</h1>
+        <canvas id="gameCanvas" width="1024" height="700"></canvas>
         <div class="instructions">
             <p>使用WASD鍵或触控按钮引导羚羊寻找藏起来的叶子~</p>
             <p><b>  找找绿色里不一样的叶子~ </b></p>

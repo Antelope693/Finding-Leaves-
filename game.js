@@ -1,4 +1,4 @@
-var canvas = document.createElement("canvas");
+var canvas = document.getElementById("gameCanvas");
 var ctx = canvas.getContext("2d");
 
 function resizeCanvas() {
@@ -26,7 +26,6 @@ window.addEventListener('resize', function() {
     }
 });
 
-document.body.appendChild(canvas);
 
 var bgReady = false;
 var bgImage = new Image();
